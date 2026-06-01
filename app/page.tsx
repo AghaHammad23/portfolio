@@ -6,6 +6,7 @@ import Loader from "@/sections/Loader"
 import Hero from "@/sections/Hero"
 import About from "@/sections/About"
 import Projects from "@/sections/Projects"
+import BeforeAfter from "@/sections/BeforeAfter"
 
 export default function Home() {
   const [showLoader, setShowLoader] = useState(true)
@@ -21,6 +22,7 @@ export default function Home() {
       <Hero isVisible={!showLoader} />
       <About />
       <Projects />
+      <BeforeAfter />
     </>
   )
 }
