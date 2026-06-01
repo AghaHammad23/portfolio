@@ -117,7 +117,14 @@ purchased/self-hosted font.
 - next/font/local for Neue Montreal
 - Lenis for smooth scroll
 
+## Accent Color
+--color-accent: #E8453C (Bold Red)
+Used for: hover borders, icon highlights, CTA interactions.
+Never as full opacity background — only strokes, icons,
+subtle fills (max 0.08 opacity as bg)
+
 ## CSS Variables (in globals.css)
 --color-light: #F5F0E8
 --color-dark: #1A1A1A
+--color-accent: #E8453C
 --font-primary: 'Neue Montreal', sans-serif

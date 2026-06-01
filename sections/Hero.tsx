@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform, useMotionTemplate } from "framer-motion"
 import { useTheme } from "@/lib/useTheme"
 
@@ -11,33 +11,53 @@ export default function Hero({ isVisible }: { isVisible: boolean }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  })
 
-  // Photo scroll effects
-  const photoBlurRaw = useTransform(scrollYProgress, [0, 0.5], [0, 20])
+  const [sectionTop, setSectionTop] = useState(0)
+  const [sectionHeight, setSectionHeight] = useState(1)
+  const { scrollY } = useScroll()
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const measure = () => {
+      setSectionTop(el.getBoundingClientRect().top + window.scrollY)
+      setSectionHeight(el.offsetHeight)
+    }
+    measure()
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
+  }, [])
+
+  const scrollYProgress = useTransform(
+    scrollY,
+    [sectionTop, sectionTop + sectionHeight],
+    [0, 1]
+  )
+
+  // Photo scroll effects — full 0→1 progress range over the 50vh pin travel
+  const photoBlurRaw = useTransform(scrollYProgress, [0, 0.6], [0, 20])
   const photoFilter = useMotionTemplate`blur(${photoBlurRaw}px)`
-  const photoY = useTransform(scrollYProgress, [0, 0.5], [0, 180])
-  // Clamped to [0, 0.4] so opacity hits 0 and stays there
-  const photoOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
+  const photoY = useTransform(scrollYProgress, [0, 0.6], [0, 180])
+  const photoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   // Name opacity — faint at rest, fully revealed as photo departs
-  const nameOpacity = useTransform(scrollYProgress, [0, 0.4], [0.15, 1])
+  const nameOpacity = useTransform(scrollYProgress, [0.1, 0.7], [0.15, 1])
 
   // Name fill — transparent → solid color as photo scrolls away
   const nameColorStart = isDark ? "rgba(245,240,232,0)" : "rgba(26,26,26,0)"
   const nameColorEnd = isDark ? "rgba(245,240,232,1)" : "rgba(26,26,26,1)"
-  const nameColor = useTransform(scrollYProgress, [0.1, 0.5], [nameColorStart, nameColorEnd])
+  const nameColor = useTransform(scrollYProgress, [0.1, 0.7], [nameColorStart, nameColorEnd])
 
   // Stroke fades out as fill comes in
   const strokeRgb = isDark ? "245,240,232" : "26,26,26"
-  const strokeAlpha = useTransform(scrollYProgress, [0.1, 0.5], [1, 0])
+  const strokeAlpha = useTransform(scrollYProgress, [0.1, 0.7], [1, 0])
   const nameStroke = useMotionTemplate`1px rgba(${strokeRgb},${strokeAlpha})`
 
+  // Accent underline appears as name fully reveals
+  const accentOpacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1])
+
   return (
-    <section ref={sectionRef} style={{ height: "300vh", position: "relative" }}>
+    <section ref={sectionRef} style={{ height: "150vh", position: "relative" }}>
       {/* Sticky viewport — clips the overflowing name text */}
       <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
 
@@ -68,15 +88,26 @@ export default function Hero({ isVisible }: { isVisible: boolean }) {
                 WebkitTextStroke: nameStroke,
                 width: "100%",
                 textAlign: "center",
-                fontSize: "clamp(6rem, 15vw, 14rem)",
+                fontSize: "clamp(6rem, 15vw, 22rem)",
                 fontWeight: 800,
                 letterSpacing: "-0.03em",
                 lineHeight: 0.9,
                 userSelect: "none",
               }}
             >
-              <div>AGHA HAMMAD</div>
+              <div>AGHA</div>
+              <div>HAMMAD</div>
               <div>AHMED</div>
+              <motion.div
+                style={{
+                  opacity: accentOpacity,
+                  height: "4px",
+                  width: "clamp(3rem, 6vw, 6rem)",
+                  backgroundColor: "#E8453C",
+                  margin: "clamp(1rem, 2vw, 2rem) auto 0",
+                  borderRadius: "2px",
+                }}
+              />
             </motion.h1>
           </div>
 
@@ -88,9 +119,17 @@ export default function Hero({ isVisible }: { isVisible: boolean }) {
               top: "52%",
               transform: "translate(-50%, -50%)",
               zIndex: 10,
+              pointerEvents: "none",
             }}
           >
-            <motion.div style={{ filter: photoFilter, y: photoY, opacity: photoOpacity }}>
+            <motion.div
+              style={{
+                opacity: photoOpacity,
+                y: photoY,
+                filter: photoFilter,
+                willChange: "transform, opacity, filter",
+              }}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/profile.png"

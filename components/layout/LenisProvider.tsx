@@ -8,6 +8,12 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     const lenis = new Lenis()
 
+    // Notify Framer Motion's useScroll (window listener) on every Lenis tick
+    lenis.on("scroll", () => {
+      window.dispatchEvent(new Event("scroll"))
+      document.dispatchEvent(new Event("scroll"))
+    })
+
     let rafId = 0
 
     function raf(time: number) {

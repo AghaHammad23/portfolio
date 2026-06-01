@@ -13,6 +13,7 @@ const config: Config = {
       colors: {
         light: "var(--color-light)",
         "dark-clr": "var(--color-dark)",
+        accent: "var(--color-accent)",
       },
     },
   },

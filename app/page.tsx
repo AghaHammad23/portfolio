@@ -4,6 +4,8 @@ import { useState } from "react"
 import { AnimatePresence } from "framer-motion"
 import Loader from "@/sections/Loader"
 import Hero from "@/sections/Hero"
+import About from "@/sections/About"
+import Projects from "@/sections/Projects"
 
 export default function Home() {
   const [showLoader, setShowLoader] = useState(true)
@@ -17,7 +19,8 @@ export default function Home() {
       </AnimatePresence>
 
       <Hero isVisible={!showLoader} />
-      
+      <About />
+      <Projects />
     </>
   )
 }
