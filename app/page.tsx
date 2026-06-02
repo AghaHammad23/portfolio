@@ -8,6 +8,8 @@ import About from "@/sections/About"
 import Projects from "@/sections/Projects"
 import BeforeAfter from "@/sections/BeforeAfter"
 import Testimonials from "@/sections/Testimonials"
+import Contact from "@/sections/Contact"
+import Footer from "@/sections/Footer"
 
 export default function Home() {
   const [showLoader, setShowLoader] = useState(true)
@@ -25,6 +27,8 @@ export default function Home() {
       <Projects />
       <BeforeAfter />
       <Testimonials />
+      <Contact />
+      <Footer />
     </>
   )
 }

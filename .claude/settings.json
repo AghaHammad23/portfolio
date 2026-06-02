@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const pkg = require\\('./node_modules/framer-motion/package.json'\\); console.log\\(pkg.version\\)\")"
+      "Bash(node -e \"const pkg = require\\('./node_modules/framer-motion/package.json'\\); console.log\\(pkg.version\\)\")",
+      "Bash(New-Item -ItemType File -Path \"c:\\\\Users\\\\PC\\\\Desktop\\\\Hammad\\\\portfolio\\\\sections\\\\Contact.tsx\" -Force)",
+      "Bash(Out-Null)",
+      "Bash(Get-Item \"c:\\\\Users\\\\PC\\\\Desktop\\\\Hammad\\\\portfolio\\\\sections\\\\Contact.tsx\")",
+      "Bash(Select-Object FullName)",
+      "Bash(touch \"c:/Users/PC/Desktop/Hammad/portfolio/sections/Footer.tsx\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\PC\\Desktop\\Hammad\\portfolio\\sections"
     ]
   }
 }
