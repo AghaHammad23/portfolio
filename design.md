@@ -15,7 +15,6 @@ Light Mode: bg = Light Color, text = Dark Color
 Dark Mode:  bg = Dark Color, text = Light Color
 
 Use opacity variants for borders, muted text, hover states.
-No third accent color.
 
 ## Typography
 Font: Neue Montreal (primary for everything)

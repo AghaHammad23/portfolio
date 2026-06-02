@@ -1,19 +1,56 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import { motion, useScroll, useTransform, useMotionTemplate } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
+const LIGHT  = "#F5F0E8"
+const DARK   = "#1A1A1A"
+const ACCENT = "#E8453C"
 
+const DISCIPLINES = [
+  "AI Automation",
+  "n8n Workflows",
+  "AI Agents",
+  "Web Development",
+  "UI Design",
+]
+
+// ─── Curtain / printing-press text reveal ─────────────────────────────────
+// Parent must clip overflow; child slides up from below the mask line.
+function SlideReveal({
+  children,
+  delay,
+  isVisible,
+}: {
+  children: React.ReactNode
+  delay: number
+  isVisible: boolean
+}) {
+  return (
+    <div style={{ overflow: "hidden" }}>
+      <motion.div
+        initial={{ y: "110%" }}
+        animate={isVisible ? { y: "0%" } : { y: "110%" }}
+        transition={{ duration: 0.92, ease: [0.16, 1, 0.3, 1], delay }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  )
+}
+
+// ─── Hero ──────────────────────────────────────────────────────────────────
 export default function Hero({ isVisible }: { isVisible: boolean }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
-  const [sectionTop, setSectionTop] = useState(0)
+  const [sectionTop, setSectionTop]       = useState(0)
   const [sectionHeight, setSectionHeight] = useState(1)
+  const [primaryHovered, setPrimaryHovered]     = useState(false)
+  const [secondaryHovered, setSecondaryHovered] = useState(false)
+
   const { scrollY } = useScroll()
 
   useEffect(() => {
@@ -34,112 +71,251 @@ export default function Hero({ isVisible }: { isVisible: boolean }) {
     [0, 1]
   )
 
-  // Photo scroll effects — full 0→1 progress range over the 50vh pin travel
-  const photoBlurRaw = useTransform(scrollYProgress, [0, 0.6], [0, 20])
-  const photoFilter = useMotionTemplate`blur(${photoBlurRaw}px)`
-  const photoY = useTransform(scrollYProgress, [0, 0.6], [0, 180])
-  const photoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+  // Scroll-driven exit — left content fades first, photo lingers
+  const leftOpacity  = useTransform(scrollYProgress, [0, 0.38], [1, 0])
+  const photoY       = useTransform(scrollYProgress, [0, 0.8],  [0, 70])
+  const photoOpacity = useTransform(scrollYProgress, [0.38, 0.78], [1, 0])
 
-  // Name opacity — faint at rest, fully revealed as photo departs
-  const nameOpacity = useTransform(scrollYProgress, [0.1, 0.7], [0.15, 1])
+  const fg         = isDark ? LIGHT : DARK
+  const pageBg     = isDark ? DARK  : LIGHT
+  const borderLine = isDark ? "rgba(245,240,232,0.09)"  : "rgba(26,26,26,0.09)"
+  const borderMid  = isDark ? "rgba(245,240,232,0.13)"  : "rgba(26,26,26,0.13)"
+  const muteText   = isDark ? "rgba(245,240,232,0.32)"  : "rgba(26,26,26,0.32)"
 
-  // Name fill — transparent → solid color as photo scrolls away
-  const nameColorStart = isDark ? "rgba(245,240,232,0)" : "rgba(26,26,26,0)"
-  const nameColorEnd = isDark ? "rgba(245,240,232,1)" : "rgba(26,26,26,1)"
-  const nameColor = useTransform(scrollYProgress, [0.1, 0.7], [nameColorStart, nameColorEnd])
-
-  // Stroke fades out as fill comes in
-  const strokeRgb = isDark ? "245,240,232" : "26,26,26"
-  const strokeAlpha = useTransform(scrollYProgress, [0.1, 0.7], [1, 0])
-  const nameStroke = useMotionTemplate`1px rgba(${strokeRgb},${strokeAlpha})`
-
-  // Accent underline appears as name fully reveals
-  const accentOpacity = useTransform(scrollYProgress, [0.5, 0.85], [0, 1])
+  const fadeIn = (delay: number) => ({
+    initial:    { opacity: 0 },
+    animate:    isVisible ? { opacity: 1 } : { opacity: 0 },
+    transition: { duration: 0.7, ease: "easeOut" as const, delay },
+  })
 
   return (
-    <section ref={sectionRef} style={{ height: "150vh", position: "relative" }}>
-      {/* Sticky viewport — clips the overflowing name text */}
-      <div style={{ position: "sticky", top: 0, height: "100vh", overflow: "hidden" }}>
+    <section ref={sectionRef} style={{ height: "160vh", position: "relative" }}>
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          overflow: "hidden",
+          backgroundColor: pageBg,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
 
-        {/* Entrance wrapper — name + photo fade in together after loader */}
+        {/* ── Top info bar ─────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          style={{ position: "absolute", inset: 0 }}
+          {...fadeIn(0.05)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingInline: "clamp(1.5rem, 4.5vw, 4.5rem)",
+            height: "52px",
+            flexShrink: 0,
+            borderBottom: `1px solid ${borderLine}`,
+          }}
+        >
+         
+          <span className="hidden md:block" style={{
+            fontSize: "2rem", fontWeight: 200,
+            letterSpacing: "0.18em", color: ACCENT, textTransform: "uppercase",
+          }}>
+            Agha Hammad Ahmed
+          </span>
+         
+        </motion.div>
+
+        {/* ── Main two-column grid ─────────────────────────────────── */}
+        <div
+          className="flex flex-col md:flex-row"
+          style={{ flex: 1, minHeight: 0, position: "relative" }}
         >
 
-          {/* Background ghost name */}
-          <div
+          {/* ── Left: editorial text content ── */}
+          <motion.div
+            className="order-2 md:order-1 flex-1 md:flex-none md:w-1/2 flex flex-col justify-center relative"
             style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              pointerEvents: "none",
-              overflow: "hidden",
+              opacity: leftOpacity,
+              paddingInline: "clamp(1.5rem, 4.5vw, 4.5rem)",
+              paddingBlock: "clamp(1.5rem, 3vh, 3rem)",
             }}
           >
-            <motion.h1
-              style={{
-                opacity: nameOpacity,
-                color: nameColor,
-                WebkitTextStroke: nameStroke,
-                width: "100%",
-                textAlign: "center",
-                fontSize: "clamp(6rem, 15vw, 22rem)",
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-                lineHeight: 0.9,
-                userSelect: "none",
-              }}
-            >
-              <div>AGHA</div>
-              <div>HAMMAD</div>
-              <div>AHMED</div>
-              <motion.div
-                style={{
-                  opacity: accentOpacity,
-                  height: "4px",
-                  width: "clamp(3rem, 6vw, 6rem)",
-                  backgroundColor: "#E8453C",
-                  margin: "clamp(1rem, 2vw, 2rem) auto 0",
-                  borderRadius: "2px",
-                }}
-              />
-            </motion.h1>
-          </div>
+            {/* Vertical divider — desktop only */}
+            <div
+              className="hidden md:block absolute top-0 right-0 bottom-0"
+              style={{ width: "1px", backgroundColor: borderMid, zIndex: 1 }}
+            />
 
-          {/* Portrait photo — sits in front, scrolls away */}
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: "52%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 10,
-              pointerEvents: "none",
-            }}
-          >
+            {/* Discipline label */}
+            <motion.div {...fadeIn(0.2)} style={{ marginBottom: "1.75rem" }}>
+              <span style={{
+                fontSize: "0.57rem", fontWeight: 500,
+                letterSpacing: "0.32em", color: ACCENT, textTransform: "uppercase",
+              }}>
+                Web Development
+              </span>
+            </motion.div>
+
+            {/* ── Headline: three typographic treatments ── */}
+            <div>
+      
+
+              {/* SYSTEMS — outlined in accent stroke */}
+              <SlideReveal delay={0.44} isVisible={isVisible}>
+                <div style={{
+                  fontSize: "clamp(3rem, 8.5vw, 9.75rem)",
+                  fontWeight: 900, lineHeight: 0.875,
+                  letterSpacing: "-0.04em",
+                  color: "transparent",
+                  WebkitTextStroke: `max(1.5px, 0.18vw) ${ACCENT}`,
+                }}>
+                  Frontend
+                </div>
+              </SlideReveal>
+
+              {/* ARCHITECT — ghost, thin weight, creates 3rd hierarchy level */}
+              <SlideReveal delay={0.56} isVisible={isVisible}>
+                <div style={{
+                  fontSize: "clamp(3rem, 8.5vw, 9.75rem)",
+                  fontWeight: 300, lineHeight: 0.875,
+                  letterSpacing: "-0.04em",
+                  color: LIGHT, opacity: 0.13,
+                }}>
+                   Developer
+                </div>
+              </SlideReveal>
+            </div>
+
+            {/* Ruled divider — draws left to right */}
             <motion.div
+              initial={{ scaleX: 0 }}
+              animate={isVisible ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.72 }}
               style={{
-                opacity: photoOpacity,
-                y: photoY,
-                filter: photoFilter,
-                willChange: "transform, opacity, filter",
+                height: "1px",
+                backgroundColor: borderMid,
+                marginBlock: "clamp(1.25rem, 3vh, 2rem)",
+                transformOrigin: "left center",
+              }}
+            />
+
+            {/* Statement */}
+            <motion.p
+              {...fadeIn(0.82)}
+              style={{
+                color: fg, opacity: 0.48,
+                fontSize: "clamp(0.875rem, 1.05vw, 1rem)",
+                lineHeight: 1.85, maxWidth: "400px",
+                marginBottom: "clamp(1.5rem, 3vh, 2.25rem)",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/profile.png"
-                alt="Agha Hammad Ahmed"
-                className="w-70 md:w-95 aspect-3/4 rounded-sm object-cover"
-              />
+              I engineer AI-powered systems and digital products — from
+              intelligent automation workflows to precision-crafted web
+              experiences.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              {...fadeIn(0.94)}
+              style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}
+            >
+              <a
+                href="#projects"
+                onMouseEnter={() => setPrimaryHovered(true)}
+                onMouseLeave={() => setPrimaryHovered(false)}
+                style={{
+                  display: "inline-flex", alignItems: "center",
+                  padding: "0.75rem 1.75rem",
+                  backgroundColor: primaryHovered ? ACCENT : fg,
+                  color: primaryHovered ? "#fff" : pageBg,
+                  fontSize: "0.67rem", fontWeight: 600, borderRadius: 0,
+                  textDecoration: "none", letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  transition: "background-color 0.22s, color 0.22s",
+                  border: "1px solid transparent",
+                }}
+              >
+                View Work
+              </a>
+              <a
+                href="#contact"
+                onMouseEnter={() => setSecondaryHovered(true)}
+                onMouseLeave={() => setSecondaryHovered(false)}
+                style={{
+                  display: "inline-flex", alignItems: "center",
+                  padding: "0.75rem 1.75rem",
+                  backgroundColor: "transparent",
+                  color: secondaryHovered ? ACCENT : fg,
+                  border: `1px solid ${secondaryHovered ? ACCENT : borderMid}`,
+                  fontSize: "0.67rem", fontWeight: 500, borderRadius: 0,
+                  textDecoration: "none", letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  transition: "color 0.22s, border-color 0.22s",
+                }}
+              >
+                Get In Touch
+              </a>
+            </motion.div>
+          </motion.div>
+
+          {/* ── Right: portrait photo ── */}
+          <div
+            className="order-1 md:order-2 shrink-0 h-[42vh] md:h-auto md:w-1/2 relative overflow-hidden"
+          >
+            {/* Bottom gradient — bleeds photo into page bg */}
+            <div style={{
+              position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
+              background: `linear-gradient(to bottom, transparent, ${pageBg})`,
+              zIndex: 2, pointerEvents: "none",
+            }} />
+
+            <motion.div {...fadeIn(0.1)} style={{ height: "100%" }}>
+              <motion.div style={{ y: photoY, opacity: photoOpacity, height: "100%", willChange: "transform, opacity" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/profile.png"
+                  alt="Agha Hammad Ahmed"
+                  style={{
+                    width: "100%", height: "100%",
+                    objectFit: "cover", objectPosition: "center top",
+                  }}
+                />
+              </motion.div>
             </motion.div>
           </div>
 
+        </div>
+
+        {/* ── Bottom disciplines strip ──────────────────────────────── */}
+        <motion.div
+          {...fadeIn(1.05)}
+          className="hidden md:flex"
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: "48px",
+            flexShrink: 0,
+            borderTop: `1px solid ${borderLine}`,
+            overflow: "hidden",
+          }}
+        >
+          {DISCIPLINES.map((d, i) => (
+            <span key={d} style={{ display: "flex", alignItems: "center" }}>
+              <span style={{
+                fontSize: "0.57rem", fontWeight: 500,
+                letterSpacing: "0.22em", color: muteText, textTransform: "uppercase",
+                paddingInline: "clamp(0.75rem, 2vw, 2.25rem)",
+                whiteSpace: "nowrap",
+              }}>
+                {d}
+              </span>
+              {i < DISCIPLINES.length - 1 && (
+                <span style={{ color: ACCENT, fontSize: "0.4rem", opacity: 0.45 }}>◆</span>
+              )}
+            </span>
+          ))}
         </motion.div>
+
       </div>
     </section>
   )
