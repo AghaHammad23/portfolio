@@ -6,10 +6,16 @@
       "Bash(Out-Null)",
       "Bash(Get-Item \"c:\\\\Users\\\\PC\\\\Desktop\\\\Hammad\\\\portfolio\\\\sections\\\\Contact.tsx\")",
       "Bash(Select-Object FullName)",
-      "Bash(touch \"c:/Users/PC/Desktop/Hammad/portfolio/sections/Footer.tsx\")"
+      "Bash(touch \"c:/Users/PC/Desktop/Hammad/portfolio/sections/Footer.tsx\")",
+      "Bash(Get-ChildItem -Path \"c:/Users/PC/Desktop/Hammad/portfolio\" -Recurse -Include \"*.tsx\",\"*.ts\",\"*.css\")",
+      "Bash(Select-String -Pattern \"#F5F0E8|#1A1A1A|--color-light|--color-dark\")",
+      "Bash(Select-Object -ExpandProperty Path)",
+      "Bash(Sort-Object -Unique)",
+      "Bash(rm \"c:/Users/PC/Desktop/Hammad/portfolio/app/test/page.tsx\")"
     ],
     "additionalDirectories": [
-      "c:\\Users\\PC\\Desktop\\Hammad\\portfolio\\sections"
+      "c:\\Users\\PC\\Desktop\\Hammad\\portfolio\\sections",
+      "c:\\Users\\PC\\Desktop\\Hammad\\portfolio\\app\\test"
     ]
   }
 }

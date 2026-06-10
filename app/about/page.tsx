@@ -5,9 +5,9 @@ import Link from "next/link"
 import { motion, useInView } from "framer-motion"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
-const ACCENT = "#E8453C"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
+const ACCENT = "#FACC15"
 
 const SKILLS = [
   "Next.js",

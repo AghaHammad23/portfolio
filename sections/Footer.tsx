@@ -6,9 +6,9 @@ import { motion, useInView } from "framer-motion"
 import { FiGithub, FiLinkedin, FiMail, FiInstagram, FiTwitter } from "react-icons/fi"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
-const ACCENT = "#E8453C"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
+const ACCENT = "#FACC15"
 
 const NAV_LINKS = [
   { label: "Work", href: "/#projects" },
@@ -40,7 +40,7 @@ function SocialLink({ Icon, href, label, fg }: { Icon: any; href: string; label:
           opacity: 0.6,
           transition: "all 0.3s ease" 
         }} 
-        className="group-hover:scale-110 group-hover:opacity-100 group-hover:!text-[#E8453C]"
+        className="group-hover:scale-110 group-hover:opacity-100 group-hover:!text-[#FACC15]"
       />
     </a>
   )
@@ -71,7 +71,6 @@ export default function Footer() {
         zIndex: 1,
       }}
     >
-      {/* TOP STRIP: Email & Socials */}
       <div
         className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-center md:text-left"
         style={{
@@ -98,7 +97,7 @@ export default function Footer() {
               color: ACCENT,
               transition: 'all 0.3s ease',
             }}
-            className="group-hover:bg-[#E8453C] group-hover:text-white"
+            className="group-hover:bg-[#FACC15] group-hover:text-white"
           >
             <FiMail size={16} />
           </span>

@@ -5,9 +5,9 @@ import { motion, useInView } from "framer-motion"
 import { FiX, FiCheck } from "react-icons/fi"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
-const RED = "#E8453C"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
+const RED = "#FACC15"
 const GREEN = "#4CAF50"
 
 const BEFORE_ITEMS = [

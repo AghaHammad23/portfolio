@@ -5,9 +5,9 @@ import { motion, useInView } from "framer-motion"
 import { FiStar } from "react-icons/fi"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
-const ACCENT = "#E8453C"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
+const ACCENT = "#FACC15"
 
 const SMALL_CARDS = [
   {
@@ -46,9 +46,10 @@ function TestimonialCard({
   isDark: boolean
 }) {
   const [isHovered, setIsHovered] = useState(false)
-  const fg = isDark ? LIGHT : DARK
-  const cardBg = isDark ? "rgba(245,240,232,0.04)" : "rgba(26,26,26,0.04)"
-  const defaultBorder = isDark ? "rgba(245,240,232,0.08)" : "rgba(26,26,26,0.08)"
+  // Card bg is opposite of page bg
+  const fg = isDark ? DARK : LIGHT
+  const cardBg = isDark ? LIGHT : DARK
+  const defaultBorder = isDark ? "rgba(35,61,76,0.2)" : "rgba(253,128,46,0.2)"
 
   return (
     <motion.div
@@ -108,7 +109,7 @@ export default function Testimonials() {
   const isInView = useInView(sectionRef as React.RefObject<Element>, { once: true, margin: "-80px" })
 
   const fg = isDark ? LIGHT : DARK
-  const sectionBg = isDark ? "#1A1A1A" : "F5F0E8"
+  const sectionBg = isDark ? DARK : LIGHT
 
   return (
     <section

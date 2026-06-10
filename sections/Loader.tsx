@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
 
 const containerVariants = {
   hidden: {},

@@ -11,9 +11,9 @@ import {
 import { FiCode, FiLayers, FiCompass, FiArrowRight } from "react-icons/fi"
 import { useTheme } from "@/lib/useTheme"
 
-const LIGHT = "#F5F0E8"
-const DARK = "#1A1A1A"
-const ACCENT = "#E8453C"
+const LIGHT = "#FD802E"
+const DARK = "#233D4C"
+const ACCENT = "#FACC15"
 
 const CARDS = [
   {
@@ -75,10 +75,11 @@ function TiltCard({ title, body, Icon, isDark, isCTA }: TiltCardProps) {
   const shinePosY = useMotionValue(50)
   const shineBackground = useMotionTemplate`radial-gradient(circle at ${shinePosX}% ${shinePosY}%, rgba(255,255,255,0.06), transparent 70%)`
 
-  const fg = isDark ? LIGHT : DARK
-  const defaultBg = isDark ? "rgba(245,240,232,0.04)" : "rgba(26,26,26,0.04)"
-  const ctaHoverBg = "rgba(232,69,60,0.08)"
-  const defaultBorder = isDark ? "rgba(245,240,232,0.1)" : "rgba(26,26,26,0.1)"
+  // Card bg is the OPPOSITE of the page bg; text on the card mirrors that inversion
+  const fg = isDark ? DARK : LIGHT
+  const defaultBg = isDark ? LIGHT : DARK
+  const ctaHoverBg = isDark ? "rgba(35,61,76,0.15)" : "rgba(253,128,46,0.15)"
+  const defaultBorder = isDark ? "rgba(35,61,76,0.25)" : "rgba(253,128,46,0.25)"
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = cardRef.current?.getBoundingClientRect()
