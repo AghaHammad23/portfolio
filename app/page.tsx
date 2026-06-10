@@ -22,7 +22,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <Hero isVisible={!showLoader} />
+      <Hero />
       <About />
       <Projects />
       <BeforeAfter />
